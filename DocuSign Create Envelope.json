@@ -1,0 +1,392 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "version": "1.0.0",
+      "title": "DocuSign",
+      "description": "DocuSign Create Envelope"
+    },
+    "host": "demo.docusign.net",
+    "basePath": "/restapi/v2.1",
+    "schemes": [
+      "https"
+    ],
+    "x-ntx-render-version": 2,
+    "produces": [
+      "application/json"
+    ],
+    "paths": {
+      "/accounts/{accountId}/envelopes": {
+        "post": {
+          "summary": "Create Envelope",
+          "operationId": "createEnvelope",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "accountId",
+              "x-ntx-summary": "Account Id",
+              "type": "string",
+              "required": true
+            },
+            {
+                "in": "body",
+                "name": "body",
+                "x-ntx-summary": "Envelope",
+                "schema": {
+                    "$ref" : "#/definitions/Envelope"
+                }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Ok",
+              "schema": {
+                "$ref": "#/definitions/Response"
+              }
+            }
+          },
+          "security": [
+            {
+              "oauth2": []
+            }
+          ],
+          "consumes": [
+            "application/json"
+          ]
+        }
+      },
+      "/accounts/{accountId}/envelopes/{envelopeId}/custom_fields": {
+        "post": {
+          "summary": "Create Custom Envelope Fields",
+          "operationId": "createCustomEnvelopeFields",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "accountId",
+              "x-ntx-summary": "Account Id",
+              "type": "string",
+              "required": true
+            },
+            {
+              "in": "path",
+              "name": "envelopeId",
+              "x-ntx-summary": "Envelope Id",
+              "type": "string",
+              "required": true
+            },
+            {
+              "in": "body",
+              "name": "body",
+              "x-ntx-summary": "Envelope Custom Fields",
+              "schema": {
+                "$ref" : "#/definitions/CustomFields"
+              }
+            }
+          ],
+          "responses": {
+            "201": {
+              "description": "Ok",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "textCustomFields": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions/TextCustomFieldResponse"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "oauth2": []
+            }
+          ],
+          "consumes": [
+            "application/json"
+          ]
+        }
+      },
+      "/accounts/{accountId}/envelopes/{envelopeId}": {
+        "put": {
+          "summary": "Update Draft Envelope Status",
+          "operationId": "updateEnvelopeStatus",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "accountId",
+              "x-ntx-summary": "Account Id",
+              "type": "string",
+              "required": true
+            },
+            {
+              "in": "path",
+              "name": "envelopeId",
+              "x-ntx-summary": "Envelope Id",
+              "type": "string",
+              "required": true
+            },
+            {
+              "in": "body",
+              "name": "body",
+              "x-ntx-summary": "",
+              "schema": {
+                "additionalProperties": false,
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "default": "sent",
+                    "enum": ["sent", "voided"]
+                  }
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Ok",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "envelopeId": {
+                    "type": "string",
+                    "x-ntx-summary": "Envelope Id"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "oauth2": []
+            }
+          ],
+          "consumes": [
+            "application/json"
+          ]
+        }
+      }
+    },
+    "definitions" : {
+      "Envelope": {
+        "x-ntx-summary": "",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+            "status": {
+              "x-ntx-summary": "Status",
+              "type": "string",
+              "x-ntx-oneOf": [{
+                "const": "sent",
+                "title": "Submit"
+              }, {
+                "const": "created",
+                "title": "Create Draft"
+              }]
+            },
+            "recipients": {
+              "x-ntx-summary": "",
+              "additionalProperties": false,
+              "type": "object",
+              "properties": {
+                "signers": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Signers"
+                  }
+                }
+              }
+            },
+            "emailSubject": {
+              "x-ntx-summary": "Email Subject",
+              "type": "string"
+            },
+            "documents": {
+              "x-ntx-summary": "Documents",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Documents"
+              }
+            }
+          }
+        },
+        "Signers" : {
+          "x-ntx-summary": "",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "email": {
+              "x-ntx-summary": "Email",
+              "type": "string"
+            },
+            "fullName": {
+              "x-ntx-summary": "Full Name",
+              "type": "string"
+            },
+            "name": {
+              "x-ntx-summary": "User Name",
+              "type": "string"
+            },
+            "recipientId": {
+              "x-ntx-summary": "Recipient Id",
+              "x-ntx-subtext": "Use an integer to assign a Recipient Id. Must be unique.",
+              "type": "string"
+            }
+          }
+        },
+        "Documents": {
+          "x-ntx-summary": "",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "documentId": {
+              "x-ntx-summary": "Document Id",
+              "x-ntx-subtext": "Use an integer to assign a Document Id. Must be unique.",
+              "type": "string"
+            },
+            "name": {
+              "x-ntx-summary": "Document Name",
+              "type": "string"
+            },
+            "documentBase64": {
+              "x-ntx-summary": "Document",
+              "type": "string",
+              "format": "byte"
+            }
+          }
+        },
+        "Response": {
+          "type": "object",
+          "x-ntx-summary": "Response",
+          "properties": {
+            "envelopeId": {
+                "type": "string",
+                "x-ntx-summary": "Envelope Id"
+            },
+            "statusDateTime": {
+                "type": "string",
+                "format": "date-time",
+                "x-ntx-summary": "Status Date and Time"
+            },
+            "status": {
+                "type": "string",
+                "x-ntx-summary": "Status"
+            }
+          }
+        },
+        "CustomFields": {
+          "type": "object",
+          "x-ntx-summary": "",
+          "additionalProperties": false,
+          "properties": {
+            "listCustomFields": {
+              "x-ntx-variables": false,
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ListCustomField"
+              }
+            },
+            "textCustomFields": {
+              "x-ntx-variables": false,
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/TextCustomField"
+              }
+            }
+          }
+        },
+        "ListCustomField": {
+          "type": "object",
+          "x-ntx-summary": "",
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": "string",
+              "x-ntx-summary": "Name"
+            },
+            "value": {
+              "type": "string",
+              "x-ntx-summary": "Value"
+            },
+            "show": {
+              "type": "string",
+              "x-ntx-summary": "Display in Envelope",
+              "x-ntx-subtext": "True or False."
+            },
+            "required": {
+              "type": "string",
+              "x-ntx-summary": "Required",
+              "x-ntx-subtext": "True or False.",
+              "x-ntx-oneOf": [{
+                "const": "true",
+                "title": "True"
+              }, {
+                "const": "false",
+                "title": "False"
+              }]
+            },
+            "listItems": {
+              "type": "array",
+              "x-ntx-variables": false,
+              "items": {
+                "$ref": "#/definitions/ListItem"
+              }
+            }
+          }
+        },
+        "TextCustomField": {
+          "type": "object",
+          "x-ntx-summary": "",
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": "string",
+              "x-ntx-summary": "Name"
+            },
+            "value": {
+              "type": "string",
+              "x-ntx-summary": "Value"
+            },
+            "show": {
+              "type": "string",
+              "x-ntx-summary": "Display in Envelope",
+              "x-ntx-subtext": "True or False."
+            },
+            "required": {
+              "type": "string",
+              "x-ntx-summary": "Required",
+              "x-ntx-subtext": "True or False.",
+              "x-ntx-oneOf": [{
+                "const": "true",
+                "title": "True"
+              }, {
+                "const": "false",
+                "title": "False"
+              }]
+            }
+          }
+        },
+        "ListItem": {
+          "type": "string"
+        },
+        "TextCustomFieldResponse": {
+          "type": "object",
+          "properties": {
+            "fieldId": {
+              "type": "string",
+              "x-ntx-summary": "Field Id"
+            }
+          }
+        }
+    },
+    "securityDefinitions": {
+      "oauth2": {
+        "type": "oauth2",
+        "flow": "accessCode",
+        "authorizationUrl": "https://account-d.docusign.com/oauth/auth",
+        "tokenUrl": "https://account-d.docusign.com/oauth/token"
+      }
+    }
+  }
